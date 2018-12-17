@@ -7,38 +7,35 @@ using System.Threading.Tasks;
 
 namespace ComicBookShared.Data
 {
-    public class ComicBookArtistRepository
+    public class ComicBookArtistRepository : BaseRepository<ComicBookArtist>
     {
-        private Context _context = null;
 
 
         public ComicBookArtistRepository(Context context)
+            :base(context)
         {
-            _context = context;
         }
 
-        public ComicBookArtist Get(int id)
+        public override ComicBookArtist Get(int id, bool includeRelatedEntities = true)
         {
-            return _context.ComicBookArtists
-                .Include(cba => cba.Artist)
-                .Include(cba => cba.Role)
-                .Include(cba => cba.ComicBook.Series)
+            var comicBookArtists = Context.ComicBookArtists.AsQueryable();
+
+            if (includeRelatedEntities)
+            {
+                comicBookArtists = comicBookArtists
+                    .Include(cba => cba.Artist)
+                    .Include(cba => cba.Role)
+                    .Include(cba => cba.ComicBook.Series);
+            }
+
+            return comicBookArtists
                 .Where(cba => cba.Id == id)
                 .SingleOrDefault();
         }
 
-        public void Add(ComicBookArtist comicBookArtist)
+        public override IList<ComicBookArtist> GetList()
         {
-            _context.ComicBookArtists.Add(comicBookArtist);
-            _context.SaveChanges();
+            throw new System.NotImplementedException();
         }
-
-        public void Delete(int id)
-        {
-            var comicBookArtist = new ComicBookArtist() { Id = id };
-            _context.Entry(comicBookArtist).State = EntityState.Deleted;
-            _context.SaveChanges();
-        }
-
     }
 }
