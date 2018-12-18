@@ -22,10 +22,10 @@ namespace ComicBookShared.Data
                     .ThenBy(cb => cb.IssueNumber)
                     .ToList();
         }
-        public override ComicBook Get(int id, bool includeRelatedEtities = true)
+        public override ComicBook Get(int id, bool includeRelatedEntities = true)
         {
             var comicBooks = Context.ComicBooks.AsQueryable();
-            if (includeRelatedEtities)
+            if (includeRelatedEntities)
             {
                 comicBooks = comicBooks
                     .Include(cb => cb.Series)
